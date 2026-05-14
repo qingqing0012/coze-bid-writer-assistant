@@ -1,0 +1,19 @@
+# 智能标书写作助手 — 智能体配置
+name: "智能标书写作助手"
+description: "根据用户需求自动生成专业化标书文档，覆盖技术方案、商务条款、项目实施等核心板块。适用于招投标场景，提升标书撰写效率与质量。"
+platform: "coze"
+version: "1.0.0"
+
+# 模型配置（根据实际修改）
+model:
+  provider: ""  # 如: coze, openai, claude
+  name: ""      # 模型名称
+  temperature: 0.7
+
+# 上下文
+context:
+  max_tokens: 4096
+  memory: true
+
+# 插件列表（根据实际填写）
+plugins: []
