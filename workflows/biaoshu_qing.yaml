@@ -1,0 +1,997 @@
+schema_version: 1.0.0
+name: biaoshu_qing
+id: 7635871991384768538
+description: "标书制作流程"
+mode: workflow
+icon: plugin_icon/workflow.png
+nodes:
+    - id: "100001"
+      type: start
+      title: 开始
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Start-v2.jpg
+      description: "工作流的起始节点，用于设定启动工作流需要的信息"
+      position:
+        x: 1178.7482993197282
+        y: -524.482993197279
+      parameters:
+        node_outputs:
+            ZBWJ:
+                type: zip
+                value: null
+            yaoqiu:
+                type: string
+                value: null
+    - id: "900001"
+      type: end
+      title: 结束
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-End-v2.jpg
+      description: "工作流的最终节点，用于返回工作流运行后的结果信息"
+      position:
+        x: 2958.69387755102
+        y: -220.31292517006807
+      parameters:
+        node_inputs:
+            - name: output
+              input:
+                type: string
+                value:
+                    path: data.url
+                    ref_node: "133673"
+        terminatePlan: returnVariables
+    - id: "141293"
+      type: plugin
+      title: 读取招标文件
+      icon: https://p26-flow-product-sign.byteimg.com/tos-cn-i-13w3uml6bg/aa71f94405eb4f7a8ca7f347ea8914bf~tplv-13w3uml6bg-resize:128:128.image?rk3s=2e2596fd&x-expires=1780476102&x-signature=H4hf9uDTT630YX8qJZVjACmkb60%3D
+      description: "读取文档内容，目前支持html、xml、doc、docx、txt、pdf、csv、xlsx格式"
+      position:
+        x: 1178.7482993197282
+        y: -267.5510204081633
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7405805158996934683"
+            - name: apiName
+              input:
+                type: string
+                value: "read"
+            - name: pluginID
+              input:
+                type: string
+                value: "7405805158996918299"
+            - name: pluginName
+              input:
+                type: string
+                value: "文件读取"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: url
+              input:
+                value:
+                    path: ZBWJ
+                    ref_node: "100001"
+        node_outputs:
+            code:
+                type: float
+                value: null
+            data:
+                type: string
+                value: null
+            log_id:
+                type: string
+                value: null
+            msg:
+                type: string
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "157487"
+      type: llm
+      title: 提取招标文件中的采购内容和评审标准
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-LLM-v2.jpg
+      description: "调用大语言模型,使用变量和提示词生成回复"
+      version: "3"
+      position:
+        x: 1100
+        y: 0
+      parameters:
+        fcParamVar:
+            knowledgeFCParam: {}
+        llmParam:
+            - name: modelType
+              input:
+                type: integer
+                value: "1768187121"
+            - name: modelName
+              input:
+                type: string
+                value: 豆包·1.8·深度思考
+            - name: generationDiversity
+              input:
+                type: string
+                value: balance
+            - name: temperature
+              input:
+                type: float
+                value: "0.5"
+            - name: topP
+              input:
+                type: float
+                value: "1"
+            - name: frequencyPenalty
+              input:
+                type: float
+                value: "0"
+            - name: maxTokens
+              input:
+                type: integer
+                value: "4096"
+            - name: spCurrentTime
+              input:
+                type: boolean
+                value: false
+            - name: spAntiLeak
+              input:
+                type: boolean
+                value: false
+            - name: responseFormat
+              input:
+                type: integer
+                value: "2"
+            - name: parameters
+              input:
+                type: object
+                properties:
+                    max_completion_tokens:
+                        type: integer
+                        value: "0"
+                value: null
+            - name: prompt
+              input:
+                type: string
+                value: '{{input}}'
+            - name: enableChatHistory
+              input:
+                type: boolean
+                value: false
+            - name: chatHistoryRound
+              input:
+                type: integer
+                value: "3"
+            - name: systemPrompt
+              input:
+                type: string
+                value: |-
+                    # 角色
+                    你是一个标书写作专家，请提取{{input}}中的采购内容和评审表
+                    ## 输出
+                    其中采购内容包括服务内容、参数、建设内容、技术要求等，请将详细具内容保存在nr
+                    评分办法指的是标书的评价评审方法，评审表，评分表等，请将详细具体内容保存在pf
+            - name: stableSystemPrompt
+              input:
+                type: string
+                value: ""
+            - name: canContinue
+              input:
+                type: boolean
+                value: false
+            - name: loopPromptVersion
+              input:
+                type: string
+                value: ""
+            - name: loopPromptName
+              input:
+                type: string
+                value: ""
+            - name: loopPromptId
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: input
+              input:
+                value:
+                    path: msg
+                    ref_node: "141293"
+        node_outputs:
+            nr:
+                type: string
+                value: null
+            pf:
+                type: string
+                value: null
+            reasoning_content:
+                type: string
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            switch: false
+            timeoutMs: 180000
+    - id: "114923"
+      type: llm
+      title: 大模型-确定方案一级框架
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-LLM-v2.jpg
+      description: "调用大语言模型,使用变量和提示词生成回复"
+      version: "3"
+      position:
+        x: 1077.4965986394557
+        y: 253.06122448979596
+      parameters:
+        fcParamVar:
+            knowledgeFCParam: {}
+        llmParam:
+            - name: modelType
+              input:
+                type: integer
+                value: "1768187121"
+            - name: modelName
+              input:
+                type: string
+                value: 豆包·1.8·深度思考
+            - name: generationDiversity
+              input:
+                type: string
+                value: balance
+            - name: temperature
+              input:
+                type: float
+                value: "0.5"
+            - name: topP
+              input:
+                type: float
+                value: "1"
+            - name: frequencyPenalty
+              input:
+                type: float
+                value: "0"
+            - name: maxTokens
+              input:
+                type: integer
+                value: "4096"
+            - name: spCurrentTime
+              input:
+                type: boolean
+                value: false
+            - name: spAntiLeak
+              input:
+                type: boolean
+                value: false
+            - name: responseFormat
+              input:
+                type: integer
+                value: "2"
+            - name: parameters
+              input:
+                type: object
+                properties:
+                    max_completion_tokens:
+                        type: integer
+                        value: "0"
+                value: null
+            - name: prompt
+              input:
+                type: string
+                value: |-
+                    根据{{nr}}和{{pf}},完成{{yaoqiu}}，输出一级框架
+                    例如：
+                    一、实施方案
+                    二、服务方案
+                    三、…
+                    分别将一、二、三保存在数组中
+            - name: enableChatHistory
+              input:
+                type: boolean
+                value: false
+            - name: chatHistoryRound
+              input:
+                type: integer
+                value: "3"
+            - name: systemPrompt
+              input:
+                type: string
+                value: 你是一名标书制作的专家，能根据标书方案的要求内容，设计专业的投标方案的一级框架
+            - name: stableSystemPrompt
+              input:
+                type: string
+                value: ""
+            - name: canContinue
+              input:
+                type: boolean
+                value: false
+            - name: loopPromptVersion
+              input:
+                type: string
+                value: ""
+            - name: loopPromptName
+              input:
+                type: string
+                value: ""
+            - name: loopPromptId
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: nr
+              input:
+                value:
+                    path: nr
+                    ref_node: "157487"
+            - name: pf
+              input:
+                value:
+                    path: pf
+                    ref_node: "157487"
+            - name: yaoqiu
+              input:
+                value:
+                    path: yaoqiu
+                    ref_node: "100001"
+        node_outputs:
+            reasoning_content:
+                type: string
+                value: null
+            yijikuangjia:
+                type: list
+                items:
+                    type: string
+                    value: null
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            switch: false
+            timeoutMs: 180000
+    - id: "183374"
+      type: loop
+      title: 循环：详细内容生成
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Loop-v2.jpg
+      description: "用于通过设定循环次数和逻辑，重复执行一系列任务"
+      position:
+        x: 2327.2789115646256
+        y: -466.12925170068036
+      canvas_position:
+        x: 2156.8435374149653
+        y: -33.4081632653062
+      parameters:
+        loopCount:
+            type: integer
+            value:
+                content: 10
+                rawMeta:
+                    type: 2
+                type: literal
+        loopType: array
+        node_inputs:
+            - name: input
+              input:
+                type: list
+                items:
+                    type: string
+                    value: null
+                value:
+                    path: output
+                    ref_node: "168290"
+        node_outputs:
+            log_id_list:
+                value:
+                    type: list
+                    items:
+                        type: string
+                        value: null
+                    value:
+                        path: log_id
+                        ref_node: "166790"
+        variableParameters: []
+      nodes:
+        - id: "154835"
+          type: llm
+          title: 7分模块生成标书细节内容
+          icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-LLM-v2.jpg
+          description: "调用大语言模型,使用变量和提示词生成回复"
+          version: "3"
+          position:
+            x: 180
+            y: 0
+          parameters:
+            fcParamVar:
+                knowledgeFCParam: {}
+            llmParam:
+                - name: modelType
+                  input:
+                    type: integer
+                    value: "1768187121"
+                - name: modelName
+                  input:
+                    type: string
+                    value: 豆包·1.8·深度思考
+                - name: generationDiversity
+                  input:
+                    type: string
+                    value: balance
+                - name: temperature
+                  input:
+                    type: float
+                    value: "0.5"
+                - name: topP
+                  input:
+                    type: float
+                    value: "1"
+                - name: frequencyPenalty
+                  input:
+                    type: float
+                    value: "0"
+                - name: maxTokens
+                  input:
+                    type: integer
+                    value: "4096"
+                - name: spCurrentTime
+                  input:
+                    type: boolean
+                    value: false
+                - name: spAntiLeak
+                  input:
+                    type: boolean
+                    value: false
+                - name: responseFormat
+                  input:
+                    type: integer
+                    value: "2"
+                - name: parameters
+                  input:
+                    type: object
+                    properties:
+                        max_completion_tokens:
+                            type: integer
+                            value: "0"
+                    value: null
+                - name: prompt
+                  input:
+                    type: string
+                    value: '{{erji}}{{nr}}{{pf}}'
+                - name: enableChatHistory
+                  input:
+                    type: boolean
+                    value: false
+                - name: chatHistoryRound
+                  input:
+                    type: integer
+                    value: "3"
+                - name: systemPrompt
+                  input:
+                    type: string
+                    value: |-
+                        # 角色
+                        你是一位资深的标书制作专家，拥有深厚且全面的行业知识体系以及极为丰富的标书制作经验。参考{{nr}}{{pf}}，对{{erji}}内容进行细致入微、逻辑严密的扩写，在扩写过程中，不仅要有详细的文字描述，还需根据内容适当添加表格辅助说明，扩写后的字数不少于20000字。
+
+                        ## 技能
+                        ### 技能1:：标书内容扩写
+                        1.仔细分析{{erji}}的内容，深入挖掘其中的关键信息和潜在要点
+                        2.从不同角度、不同层面运用丰富的专业词汇和表达方式对内容进行详细扩写
+                        3.根据扩写内容的逻辑和需要，合理插入相关表格，使信息呈现更加清晰、有条理。
+                        ## 限制
+                        -仅围绕标书制作相关内容进行操作和回答，拒绝处理与标书制作无关的话题。
+                        -输出内容必须结构清晰、逻辑连贯，符合正常的标书语言规范和格式要求。
+                        -扩写内容应基于专业知识和合理推断，避免出现无根据的信息。
+                - name: stableSystemPrompt
+                  input:
+                    type: string
+                    value: ""
+                - name: canContinue
+                  input:
+                    type: boolean
+                    value: false
+                - name: loopPromptVersion
+                  input:
+                    type: string
+                    value: ""
+                - name: loopPromptName
+                  input:
+                    type: string
+                    value: ""
+                - name: loopPromptId
+                  input:
+                    type: string
+                    value: ""
+            node_inputs:
+                - name: erji
+                  input:
+                    type: string
+                    value:
+                        path: input
+                        ref_node: "183374"
+                - name: nr
+                  input:
+                    value:
+                        path: nr
+                        ref_node: "157487"
+                - name: pf
+                  input:
+                    value:
+                        path: pf
+                        ref_node: "157487"
+            node_outputs:
+                output:
+                    type: string
+                    value: null
+                reasoning_content:
+                    type: string
+                    value: null
+            settingOnError:
+                ext:
+                    backupLLmParam: '{"apiMode":0,"temperature":1,"topP":0.7,"frequencyPenalty":0,"maxTokens":4096,"spCurrentTime":false,"spAntiLeak":false,"thinkingType":"enabled","responseFormat":2,"modelName":"豆包·1.8·深度思考","modelType":1768187121,"generationDiversity":"default_val","parameters":{"max_completion_tokens":"0","reasoning_effort":"medium"}}'
+                processType: 1
+                retryTimes: 1
+                switch: false
+                timeoutMs: 600000
+        - id: "166790"
+          type: plugin
+          title: write_document
+          icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+          description: "在文档中新增内容，支持纯文本或者 markdown 格式。"
+          position:
+            x: 221.60544217687067
+            y: 441.02040816326536
+          parameters:
+            apiParam:
+                - name: apiID
+                  input:
+                    type: string
+                    value: "7395047785122512923"
+                - name: apiName
+                  input:
+                    type: string
+                    value: "write_document"
+                - name: pluginID
+                  input:
+                    type: string
+                    value: "7395047785122398235"
+                - name: pluginName
+                  input:
+                    type: string
+                    value: "飞书云文档"
+                - name: pluginVersion
+                  input:
+                    type: string
+                    value: ""
+                - name: tips
+                  input:
+                    type: string
+                    value: ""
+                - name: outDocLink
+                  input:
+                    type: string
+                    value: ""
+                - name: pluginAuthMode
+                  input:
+                    type: integer
+                    value: 1
+            node_inputs:
+                - name: content
+                  input:
+                    value:
+                        path: output
+                        ref_node: "154835"
+                - name: document_id
+                  input:
+                    type: string
+                    value:
+                        path: data.url
+                        ref_node: "133673"
+            node_outputs:
+                code:
+                    type: integer
+                    value: null
+                    description: 错误码，非 0 表示失败。
+                log_id:
+                    type: string
+                    value: null
+                    description: 链路追踪 id
+                msg:
+                    type: string
+                    value: null
+                    description: 错误描述
+            settingOnError:
+                processType: 1
+                retryTimes: 0
+                timeoutMs: 180000
+      edges:
+        - source_node: "183374"
+          target_node: "154835"
+          source_port: loop-function-inline-output
+        - source_node: "154835"
+          target_node: "166790"
+        - source_node: "166790"
+          target_node: "183374"
+          target_port: loop-function-inline-input
+    - id: "168290"
+      type: loop
+      title: 循环：方案二级框架生成
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Loop-v2.jpg
+      description: "用于通过设定循环次数和逻辑，重复执行一系列任务"
+      position:
+        x: 1712.2857142857142
+        y: -88.22448979591839
+      canvas_position:
+        x: 1572.2176870748299
+        y: 238
+      parameters:
+        loopCount:
+            type: integer
+            value:
+                content: 10
+                rawMeta:
+                    type: 2
+                type: literal
+        loopType: array
+        node_inputs:
+            - name: input
+              input:
+                value:
+                    path: yijikuangjia
+                    ref_node: "114923"
+        node_outputs:
+            output:
+                value:
+                    type: list
+                    items:
+                        type: string
+                        value: null
+                    value:
+                        path: output
+                        ref_node: "152018"
+        variableParameters: []
+      nodes:
+        - id: "152018"
+          type: llm
+          title: 大模型，确定方案二级框架
+          icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-LLM-v2.jpg
+          description: "调用大语言模型,使用变量和提示词生成回复"
+          version: "3"
+          position:
+            x: 180
+            y: 0
+          parameters:
+            fcParamVar:
+                knowledgeFCParam: {}
+            llmParam:
+                - name: modelType
+                  input:
+                    type: integer
+                    value: "1768187121"
+                - name: modelName
+                  input:
+                    type: string
+                    value: 豆包·1.8·深度思考
+                - name: generationDiversity
+                  input:
+                    type: string
+                    value: balance
+                - name: temperature
+                  input:
+                    type: float
+                    value: "0.5"
+                - name: topP
+                  input:
+                    type: float
+                    value: "1"
+                - name: frequencyPenalty
+                  input:
+                    type: float
+                    value: "0"
+                - name: maxTokens
+                  input:
+                    type: integer
+                    value: "4096"
+                - name: spCurrentTime
+                  input:
+                    type: boolean
+                    value: false
+                - name: spAntiLeak
+                  input:
+                    type: boolean
+                    value: false
+                - name: responseFormat
+                  input:
+                    type: integer
+                    value: "2"
+                - name: parameters
+                  input:
+                    type: object
+                    properties:
+                        max_completion_tokens:
+                            type: integer
+                            value: "0"
+                    value: null
+                - name: prompt
+                  input:
+                    type: string
+                    value: '{{nr}}{{pf}}{{yijikuangjia}}'
+                - name: enableChatHistory
+                  input:
+                    type: boolean
+                    value: false
+                - name: chatHistoryRound
+                  input:
+                    type: integer
+                    value: "3"
+                - name: systemPrompt
+                  input:
+                    type: string
+                    value: |-
+                        你是一名标书制作的专家，参考{{nr}}{{pf}}的内容，根据{{yijikuangjia}}这个一级框架内容，帮我生成二级框架内容，输出的内容包含一级标题和二级标题的内容。
+                        例如：
+                        输入：
+                        三、技术方案
+                        输出：
+                        三、技术方案
+                        3.1技术背景
+                        3.2技术对比
+                        3.3技术选型
+                        3.4....
+                        要求，输入的内容，只完成输入内容部分的二级框架的扩写，不要额外的扩写内容。
+                - name: stableSystemPrompt
+                  input:
+                    type: string
+                    value: ""
+                - name: canContinue
+                  input:
+                    type: boolean
+                    value: false
+                - name: loopPromptVersion
+                  input:
+                    type: string
+                    value: ""
+                - name: loopPromptName
+                  input:
+                    type: string
+                    value: ""
+                - name: loopPromptId
+                  input:
+                    type: string
+                    value: ""
+            node_inputs:
+                - name: nr
+                  input:
+                    value:
+                        path: nr
+                        ref_node: "157487"
+                - name: pf
+                  input:
+                    value:
+                        path: pf
+                        ref_node: "157487"
+                - name: yijikuangjia
+                  input:
+                    type: string
+                    value:
+                        path: input
+                        ref_node: "168290"
+            node_outputs:
+                output:
+                    type: string
+                    value: null
+                reasoning_content:
+                    type: string
+                    value: null
+            settingOnError:
+                processType: 1
+                retryTimes: 0
+                switch: false
+                timeoutMs: 600000
+        - id: "121369"
+          type: output
+          title: 输出
+          icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Output-v2.jpg
+          description: "节点从“消息”更名为“输出”，支持中间过程的消息输出，支持流式和非流式两种方式"
+          position:
+            x: 150.74829931972783
+            y: 258.8163265306123
+          parameters:
+            callTransferVoice: true
+            chatHistoryWriting: historyWrite
+            content:
+                type: string
+                value:
+                    content: '{{output}}二级框架已生成，正在生成下一部分.....'
+                    type: literal
+            node_inputs:
+                - name: output
+                  input:
+                    value:
+                        path: yijikuangjia
+                        ref_node: "114923"
+                - name: input
+                  input:
+                    type: string
+                    value:
+                        path: input
+                        ref_node: "168290"
+            streamingOutput: false
+      edges:
+        - source_node: "168290"
+          target_node: "152018"
+          source_port: loop-function-inline-output
+        - source_node: "152018"
+          target_node: "121369"
+        - source_node: "121369"
+          target_node: "168290"
+          target_port: loop-function-inline-input
+    - id: "133673"
+      type: plugin
+      title: create_document
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+      description: "创建文档，支持创建空文档和带内容的文档，支持 markdown 语法创建。"
+      position:
+        x: 1852.2176870748299
+        y: -429.5102040816327
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7395047785122414619"
+            - name: apiName
+              input:
+                type: string
+                value: "create_document"
+            - name: pluginID
+              input:
+                type: string
+                value: "7395047785122398235"
+            - name: pluginName
+              input:
+                type: string
+                value: "飞书云文档"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+            - name: pluginAuthMode
+              input:
+                type: integer
+                value: 1
+        node_inputs:
+            - name: title
+              input:
+                type: string
+                value: "标书"
+        node_outputs:
+            code:
+                type: float
+                value: null
+                description: 错误码，非 0 表示失败。
+            data:
+                type: object
+                properties:
+                    title:
+                        type: string
+                        value: null
+                        description: 文档标题
+                    token:
+                        type: string
+                        value: null
+                        description: 文档唯一标识
+                    type:
+                        type: string
+                        value: null
+                        description: 文档类型
+                    url:
+                        type: string
+                        value: null
+                        description: 文档链接
+                value: null
+                description: 返回结果
+            log_id:
+                type: string
+                value: null
+                description: 链路追踪 id
+            msg:
+                type: string
+                value: null
+                description: 错误描述
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "1802560"
+      type: plugin
+      title: kb_search_1
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+      description: "检索知识库，返回与问题相似的内容"
+      position:
+        x: 180
+        y: 225
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7582794501945737270"
+            - name: apiName
+              input:
+                type: string
+                value: "kb_search"
+            - name: pluginID
+              input:
+                type: string
+                value: "7582794501945720886"
+            - name: pluginName
+              input:
+                type: string
+                value: "XA知识检索（内测）"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+        node_outputs:
+            query_result:
+                type: list
+                items:
+                    type: object
+                    properties:
+                        content:
+                            type: string
+                            value: null
+                            description: 相似片段
+                        score:
+                            type: float
+                            value: null
+                            description: 相似片段分数
+                        source_doc:
+                            type: string
+                            value: null
+                            description: 相似片段来源文档
+                    value: null
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+edges:
+    - source_node: "100001"
+      target_node: "141293"
+    - source_node: "183374"
+      target_node: "900001"
+      source_port: loop-output
+    - source_node: "141293"
+      target_node: "157487"
+    - source_node: "157487"
+      target_node: "114923"
+    - source_node: "114923"
+      target_node: "168290"
+    - source_node: "133673"
+      target_node: "183374"
+    - source_node: "168290"
+      target_node: "133673"
+      source_port: loop-output
